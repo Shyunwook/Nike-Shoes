@@ -1,0 +1,8 @@
+.btn_login{
+  width: 222px;
+  height: 49px;
+  outline: none;
+  display: block;
+  background: url('../image/btn_login.png');
+  cursor: pointer;
+}

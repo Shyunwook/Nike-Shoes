@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Nike Shoes</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+
+  </head>
+  <body>
+    <button class="token">토큰을 다오</button>
+
+
+    <script>
+      $('.token').on('click',function(){
+        var data = {"grant_type":"authorization_code","client_id":"5cb4b52a3aed06734662d776fdd9dc0d","redirect_uri":"http://localhost:3000/kakaologin","code":"<%= code %>"};
+        $.ajax({
+          url: "https://cors-anywhere-esko.herokuapp.com/https://kauth.kakao.com/oauth/token",
+          type: "POST",
+          data: data,
+          dataType: "json",
+          success: function(data){
+            console.log(data);
+          },
+          error: function(err){
+            console.log(err);
+          }
+        })
+      });
+    </script>
+  </body>
+</html>
