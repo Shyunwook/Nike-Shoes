@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Nike Shoes</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+
+  </head>
+  <body>
+    <img class="user_profile"/>
+    <p class="user_nickname"></p>
+
+
+    <script>
+      $(document).ready(function(){
+        // getToken();
+      });
+
+      function getToken(){
+        var data = {"grant_type":"authorization_code","client_id":"5cb4b52a3aed06734662d776fdd9dc0d","redirect_uri":"http://localhost:3000/kakaologin","code":"<%= code %>"};
+        $.ajax({
+          url: "https://cors-anywhere-esko.herokuapp.com/https://kauth.kakao.com/oauth/token",
+          type: "POST",
+          data: data,
+          dataType: "json",
+          success: function(data){
+            console.log(data);
+            // connectApp(data.access_token);
+            getUserInfo(data.access_token);
+          },
+          error: function(err){
+            console.log(err);
+          }
+        })
+      }
+
+      function connectApp(token){
+        var headers = {"Authorization":"Bearer "+token};
+        $.ajax({
+          url: "https://cors-anywhere-esko.herokuapp.com/https://kapi.kakao.com/v1/user/signup",
+          type: "GET",
+          headers : headers,
+          success: function(data){
+            console.log(data);
+          },
+          error: function(err){
+            console.log(err);
+          }
+        })
+      }
+
+      function getUserInfo(token){
+        var headers = {"Authorization":"Bearer "+token};
+        $.ajax({
+          url: "https://cors-anywhere-esko.herokuapp.com/https://kapi.kakao.com/v1/user/me",
+          type: "GET",
+          headers : headers,
+          success: function(data){
+            console.log(data);
+            var profile = data.properties.profile_image;
+            var nickname = data.properties.nickname;
+            $('.user_profile').attr('src',profile);
+            $('.user_nickname').text(nickname);
+          },
+          error: function(err){
+            console.log(err);
+          }
+        })
+      }
+    </script>
+  </body>
+</html>

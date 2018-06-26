@@ -17,8 +17,11 @@
   },
   "homepage": "https://github.com/Shyunwook/Nike-Shoes#readme",
   "dependencies": {
+    "connect-redis": "^3.3.3",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "redis": "^2.8.0",
     "request": "^2.87.0"
   }
 }
