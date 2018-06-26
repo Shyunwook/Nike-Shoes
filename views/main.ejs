@@ -18,7 +18,7 @@
       });
 
       function getToken(){
-        var data = {"grant_type":"authorization_code","client_id":"5cb4b52a3aed06734662d776fdd9dc0d","redirect_uri":"http://localhost:3000/kakaologin","code":"<%= code %>"};
+        var data = {"client_id":"5cb4b52a3aed06734662d776fdd9dc0d","redirect_uri":"http://localhost:3000/kakaologin","code":"<%= code %>"};
         $.ajax({
           url: "https://cors-anywhere-esko.herokuapp.com/https://kauth.kakao.com/oauth/token",
           type: "POST",
