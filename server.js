@@ -37,28 +37,98 @@ app.get('/',function(req,res){
 
 app.get('/kakaologin',function(req,res){
   var code = req.query.code;
+  if(req.session.token){
+    getUserInfo(req.session.token,function(info){
+      info = JSON.parse(info);
+      req.session.user_info= info.properties;
+      req.session.user_id = info.id;
 
-  getToken(code,function(){
-    res.render('main.ejs',{'code':code});
-  });
-
+      res.redirect('/main');
+    });
+  }else{
+    getToken(code,function(token){
+      req.session.token = token;
+      getUserInfo(req.session.token,function(info){
+        info = JSON.parse(info);
+        req.session.user = info.properties;
+        req.session.user_id = info.id;
+        res.redirect('/main');
+      });
+    });
+  }
 });
 
+app.get('/main',function(req,res){
+  if(req.session.user){
+    res.render('main.ejs',{'info':req.session.user});
+  }else{
+    res.redirect('/');
+  }
+})
+
+app.get('/logout',function(req,res){
+  var headers = {"Authorization":"Bearer "+req.session.token};
+  request({
+    url: "https://kapi.kakao.com/v1/user/logout",
+    method: 'POST',
+    headers: headers
+  },function(error,response,data){
+    if(error){
+      console.log(error);
+    }else if(response.statusCode==200){
+      req.session.destroy();
+      res.redirect('/');
+    }
+  })
+})
+
+app.get('/resignation',function(req,res){
+  var headers = {"Authorization":"Bearer "+req.session.token};
+  request({
+    url: "https://kapi.kakao.com/v1/user/unlink",
+    method: 'POST',
+    headers: headers
+  },function(error,response,data){
+    if(error){
+      console.log(error);
+    }else if(response.statusCode==200){
+      req.session.destroy();
+      res.redirect('/');
+    }
+  })
+})
 
 function getToken(code,callback){
-  console.log('실행');
-  var json = '{"grant_type":"authorization_code","client_id":"5cb4b52a3aed06734662d776fdd9dc0d","redirect_uri":"http://localhost:3000/kakaologin","code":'+code+'}';
-  var url = "https://cors-anywhere-esko.herokuapp.com/https://kauth.kakao.com/oauth/token";
+  var data = "?grant_type=authorization_code&client_id=5cb4b52a3aed06734662d776fdd9dc0d&redirect_uri=http://localhost:3000/kakaologin&code="+code;
+  var url = "https://kauth.kakao.com/oauth/token";
   request({
     method: 'POST',
-    url : url,
+    url : url+data,
+    body : "{}",
     json: true,
   },function(error,response,data){
-
-    console.log(error);
-    console.log(response.statusCode);
-    console.log(data);
+    if(error){
+      console.log(error);
+    }else if(response.statusCode==200){
+      callback(data.access_token);
+    }
   });
+}
+
+function getUserInfo(token,callback){
+  var headers = {"Authorization":"Bearer "+token};
+  request({
+    url: "https://kapi.kakao.com/v1/user/me",
+    method: 'GET',
+    headers: headers
+  },function(error,response,data){
+    if(error){
+      console.log(error);
+    }else if(response.statusCode==200){
+      callback(data);
+    }
+  })
+
 }
 
 
