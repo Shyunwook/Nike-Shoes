@@ -2,6 +2,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 var express = require('express');
 var request = require('request');
+var cheerio = require('cheerio');
 
 //session 관리
 var redis = require('redis');
@@ -50,6 +51,7 @@ app.get('/kakaologin',function(req,res){
       req.session.token = token;
       getUserInfo(req.session.token,function(info){
         info = JSON.parse(info);
+        info.properties.email = info.kaccount_email;
         req.session.user = info.properties;
         req.session.user_id = info.id;
         res.redirect('/main');
@@ -60,11 +62,14 @@ app.get('/kakaologin',function(req,res){
 
 app.get('/main',function(req,res){
   if(req.session.user){
-    res.render('main.ejs',{'info':req.session.user});
+    crawlShoewInfo(function(data){
+      res.render('main.ejs',{'info':req.session.user,'data':data});
+    });
   }else{
     res.redirect('/');
   }
 })
+
 
 app.get('/logout',function(req,res){
   var headers = {"Authorization":"Bearer "+req.session.token};
@@ -77,6 +82,7 @@ app.get('/logout',function(req,res){
       console.log(error);
     }else if(response.statusCode==200){
       req.session.destroy();
+      console.log(req.session);
       res.redirect('/');
     }
   })
@@ -97,6 +103,21 @@ app.get('/resignation',function(req,res){
     }
   })
 })
+
+function crawlShoewInfo(callback){
+  request({
+    method: 'GET',
+    url: 'https://footsell.com/g2/bbs/board.php?bo_table=notice&alim_click=yes&wr_id=11543',
+    json: true,
+  },function(error,response,data){
+    if(error){
+      console.log(error);
+    }else if(response.statusCode==200){
+      var $ = cheerio.load(data);
+      callback($('#resContents'));
+    }
+  });
+}
 
 function getToken(code,callback){
   var data = "?grant_type=authorization_code&client_id=5cb4b52a3aed06734662d776fdd9dc0d&redirect_uri=http://localhost:3000/kakaologin&code="+code;

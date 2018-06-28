@@ -14,7 +14,7 @@
     <img class="user_profile"/>
     <p class="user_nickname"></p>
     <p class="user_email"></p>
-
+    <%- data %>
     <script>
       $(document).ready(function(){
         var info = <%- JSON.stringify(info) %>;
@@ -31,25 +31,6 @@
       //     headers : headers,
       //     success: function(data){
       //       console.log(data);
-      //     },
-      //     error: function(err){
-      //       console.log(err);
-      //     }
-      //   })
-      // }
-      //
-      // function getUserInfo(token){
-      //   var headers = {"Authorization":"Bearer "+token};
-      //   $.ajax({
-      //     url: "https://cors-anywhere-esko.herokuapp.com/https://kapi.kakao.com/v1/user/me",
-      //     type: "GET",
-      //     headers : headers,
-      //     success: function(data){
-      //       console.log(data);
-      //       var profile = data.properties.profile_image;
-      //       var nickname = data.properties.nickname;
-      //       $('.user_profile').attr('src',profile);
-      //       $('.user_nickname').text(nickname);
       //     },
       //     error: function(err){
       //       console.log(err);

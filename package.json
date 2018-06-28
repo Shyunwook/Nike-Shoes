@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Shyunwook/Nike-Shoes#readme",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "connect-redis": "^3.3.3",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
